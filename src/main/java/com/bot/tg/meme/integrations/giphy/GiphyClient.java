@@ -2,6 +2,7 @@ package com.bot.tg.meme.integrations.giphy;
 
 import com.bot.tg.meme.integrations.giphy.model.request.RandomGifRequest;
 import com.bot.tg.meme.integrations.giphy.model.request.SearchGifRequest;
+import com.bot.tg.meme.integrations.giphy.model.request.TranslateGifRequest;
 import com.bot.tg.meme.integrations.giphy.model.response.Gif;
 import com.bot.tg.meme.integrations.giphy.model.response.RandomResponse;
 import com.bot.tg.meme.integrations.giphy.model.response.SearchResponse;
@@ -15,6 +16,7 @@ public class GiphyClient {
 
     private static final String GIPHY_URL = "https://api.giphy.com";
     private static final String GIPHY_RANDOM_SUFFIX = "/v1/gifs/random";
+    private static final String GIPHY_TRANSLATE_SUFFIX = "/v1/gifs/translate";
     private static final String GIPHY_SEARCH_SUFFIX = "/v1/gifs/search";
     final RestTemplate restTemplate;
     final String apiToken;
@@ -24,6 +26,7 @@ public class GiphyClient {
         this.apiToken = apiToken;
     }
 
+//    @RateLimiter(name = "gifApi", fallbackMethod = "rateLimitFallback")
     public Gif getRandomGif(RandomGifRequest randomGifRequest) {
         UriComponentsBuilder builder = UriComponentsBuilder.fromHttpUrl(GIPHY_URL + GIPHY_RANDOM_SUFFIX);
         randomGifRequest.tag.map(it -> builder.queryParam("tag", it));
@@ -52,6 +55,37 @@ public class GiphyClient {
         return entity.getBody().data;
     }
 
+//    @RateLimiter(name = "gifApi", fallbackMethod = "rateLimitFallback")
+    public Gif getTranslateGif(TranslateGifRequest translateGifRequest) {
+        UriComponentsBuilder builder = UriComponentsBuilder.fromHttpUrl(GIPHY_URL + GIPHY_TRANSLATE_SUFFIX);
+        translateGifRequest.countryCode.map(it -> builder.queryParam("country_code", it));
+        translateGifRequest.region.map(it -> builder.queryParam("region", it));
+        builder.queryParam("api_key", apiToken);
+        builder.queryParam("s", translateGifRequest.s);
+        builder.queryParam("rating", translateGifRequest.rating.toArray());
+
+        HttpHeaders headers = new HttpHeaders();
+        HttpEntity<String> requestEntity = new HttpEntity<>(headers);
+
+        ResponseEntity<RandomResponse> entity = restTemplate.exchange(
+                builder.toUriString(),
+                HttpMethod.GET,
+                requestEntity,
+                RandomResponse.class
+        );
+
+        if (!entity.getStatusCode().is2xxSuccessful()) {
+            throw new RuntimeException("Giphy returned with error code %s".formatted(entity.toString()));
+        }
+
+        if (!"200".equals(entity.getBody().meta.status)) {
+            throw new RuntimeException("Giphy returned Meta with error code %s".formatted(entity.getBody().meta.toString()));
+        }
+
+        return entity.getBody().data;
+    }
+
+//    @RateLimiter(name = "gifApi", fallbackMethod = "rateLimitFallback")
     public List<Gif> getGifByType(SearchGifRequest searchGifRequest) {
         UriComponentsBuilder builder = UriComponentsBuilder.fromHttpUrl(GIPHY_URL + GIPHY_SEARCH_SUFFIX);
 
@@ -82,5 +116,8 @@ public class GiphyClient {
         return entity.getBody().gifs;
     }
 
+    public String rateLimitFallback(Throwable t) {
+        return "Rate limit exceeded. Please try again later.";
+    }
 
 }

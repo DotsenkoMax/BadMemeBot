@@ -1,4 +1,4 @@
-package com.bot.tg.meme.subscriptions;
+package com.bot.tg.meme.repository;
 
 import java.util.List;
 

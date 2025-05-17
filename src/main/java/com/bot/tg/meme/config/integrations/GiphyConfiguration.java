@@ -7,7 +7,7 @@ import org.springframework.context.annotation.Configuration;
 import org.springframework.web.client.RestTemplate;
 
 @Configuration
-public class GiphyConfig {
+public class GiphyConfiguration {
 
     @Bean
     public RestTemplate initRestTemplate() {
@@ -15,7 +15,7 @@ public class GiphyConfig {
     }
 
     @Bean
-    public GiphyClient initClient(@Value("${giphy.token}") String giphyToken, RestTemplate restTemplate) {
+    public GiphyClient giphyClient(@Value("${giphy.token}") String giphyToken, RestTemplate restTemplate) {
         return new GiphyClient(restTemplate, giphyToken);
     }
 }

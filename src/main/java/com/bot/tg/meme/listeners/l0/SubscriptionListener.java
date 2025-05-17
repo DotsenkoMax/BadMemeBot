@@ -1,10 +1,8 @@
-package com.bot.tg.meme.listeners;
+package com.bot.tg.meme.listeners.l0;
 
 import com.bot.tg.meme.models.events.TgMessageEvent;
-import com.bot.tg.meme.subscriptions.Subscription;
-import com.bot.tg.meme.subscriptions.SubscriptionRepository;
-import com.pengrad.telegrambot.TelegramBot;
-import com.pengrad.telegrambot.request.SendMessage;
+import com.bot.tg.meme.repository.Subscription;
+import com.bot.tg.meme.repository.SubscriptionRepository;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -20,7 +18,7 @@ public class SubscriptionListener {
     SubscriptionRepository subscriptionRepository;
 
     @EventListener
-    @Async
+    @Async("level0Executor")
     public void onApplicationEvent(TgMessageEvent event) {
         logger.info("Received NewSubscription to process {}", event.tgUpdate.message().chat().id());
 

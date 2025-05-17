@@ -1,0 +1,7 @@
+resilience4j:
+  ratelimiter:
+    instances:
+      gifApi:
+        limitForPeriod: 10
+        limitRefreshPeriod: 5m
+        timeoutDuration: 3s

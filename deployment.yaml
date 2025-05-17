@@ -1,0 +1,38 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: bad-meme-bot
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app: bad_meme_bot
+  template:
+    metadata:
+      labels:
+        app: bad_meme_bot
+    spec:
+      containers:
+        - name: bad-meme-bot
+          image: gcr.io/opportune-mile-459921-v2/bad_meme_bot:latest
+          imagePullPolicy: Always
+          ports:
+            - containerPort: 8080
+          env:
+            - name: bot_token
+              valueFrom:
+                secretKeyRef:
+                  name: bad-meme-bot-secret
+                  key: bot_token
+            - name: giphy_token
+              valueFrom:
+                secretKeyRef:
+                  name: bad-meme-gif-secret
+                  key: giphy_token
+            - name: cohere_token
+              valueFrom:
+                secretKeyRef:
+                  name: bad-meme-cohere-secret
+                  key: cohere_token
+            - name: spring_profile
+              value: "prod"

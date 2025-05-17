@@ -26,7 +26,7 @@ public class TelegramClient {
         );
         logger.info("Sent gif on Update {}", response);
     }
-
+    // @RateLimiter
     public void sendGif(TgGifEvent tgGifEvent) {
         final com.pengrad.telegrambot.response.SendResponse response;
         response = tgGifEvent.replyToMessageId.map(integer -> bot.execute(

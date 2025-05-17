@@ -1,6 +1,6 @@
 package com.bot.tg.meme.publisher;
 
-import com.bot.tg.meme.listeners.EchoListener;
+import com.bot.tg.meme.models.events.TgChatHotEvent;
 import com.bot.tg.meme.models.events.TgGifEvent;
 import com.bot.tg.meme.models.events.TgMessageEvent;
 import com.pengrad.telegrambot.model.Update;
@@ -24,7 +24,12 @@ public class EventMessagesPublisher {
     }
 
     public void publishGifSendingEvent(final TgGifEvent update) {
-        logger.info("Publishing Update event from Telegram");
+        logger.info("Publishing Update event from Telegram in chat with id {}", update.chatId);
         applicationEventPublisher.publishEvent(update);
+    }
+
+    public void publishHotEvent(final TgChatHotEvent hotEvent) {
+        logger.info("Publishing hot eventin chat with id {}", hotEvent.getChatId());
+        applicationEventPublisher.publishEvent(hotEvent);
     }
 }
