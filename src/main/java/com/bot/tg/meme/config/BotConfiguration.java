@@ -1,5 +1,6 @@
 package com.bot.tg.meme.config;
 
+import com.bot.tg.meme.integrations.telegram.TelegramClient;
 import com.bot.tg.meme.publisher.EventMessagesPublisher;
 import com.pengrad.telegrambot.TelegramBot;
 import com.pengrad.telegrambot.UpdatesListener;
@@ -12,7 +13,6 @@ import org.springframework.context.event.ApplicationEventMulticaster;
 import org.springframework.context.event.SimpleApplicationEventMulticaster;
 import org.springframework.core.task.SimpleAsyncTaskExecutor;
 import org.springframework.scheduling.annotation.EnableAsync;
-import org.springframework.stereotype.Component;
 
 @Configuration
 @EnableAsync
@@ -26,7 +26,7 @@ public class BotConfiguration {
     EventMessagesPublisher initPublisher(TelegramBot bot, ApplicationEventPublisher applicationEventPublisher) {
         EventMessagesPublisher publisher = new EventMessagesPublisher(applicationEventPublisher);
         bot.setUpdatesListener(updates -> {
-            updates.stream().filter(it -> it.message() != null && it.message().text() != null).forEach(publisher::publishCustomEvent);
+            updates.forEach(publisher::publishRawTgEvent);
             return UpdatesListener.CONFIRMED_UPDATES_ALL;
         }, e -> {
             if (e.response() != null) {
@@ -56,4 +56,8 @@ public class BotConfiguration {
         return new ChatSessionConfig();
     }
 
+    @Bean
+    public String botName(TelegramClient telegramClient) {
+        return telegramClient.getMe().name();
+    }
 }

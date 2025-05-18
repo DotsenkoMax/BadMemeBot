@@ -16,8 +16,8 @@ import java.time.Clock;
 import java.time.LocalDateTime;
 
 @Component
-public class TGGifSenderListener {
-    private static final Logger logger = LoggerFactory.getLogger(TGGifSenderListener.class);
+public class TGSenderListener {
+    private static final Logger logger = LoggerFactory.getLogger(TGSenderListener.class);
 
     @Autowired
     TelegramClient telegramClient;
@@ -28,16 +28,23 @@ public class TGGifSenderListener {
     @EventListener
     @Async("level100Executor")
     public void onApplicationEvent(TgSendEvent event) {
-        logger.info("Received TGGifSenderListener to process {}", event.tgRawSendEvent.chatId);
-        telegramClient.sendGif(event.tgRawSendEvent);
+        var raw = event.tgRawSendEvent;
+        boolean isGif = raw.message.isEmpty();
 
-        logger.info("Adding TgGifEvent to the repository {}", event.tgRawSendEvent.chatId);
+        logger.info("Received TgSendEvent to process, chatId: {}", raw.chatId);
+        telegramClient.sendMessage(raw);
+
+        BotMessageType type = isGif ? BotMessageType.GIF : BotMessageType.TEXT;
+        logger.info("Adding Tg{}Event to the repository {}", type, raw.chatId);
+
         repository.addMessage(
-                event.tgRawSendEvent.chatId, BotMessage.builder()
-                        .messageType(BotMessageType.GIF)
-                        .repliedMessageId(event.tgRawSendEvent.replyToMessageId)
-                        .chatId(event.tgRawSendEvent.chatId)
+                raw.chatId,
+                BotMessage.builder()
+                        .messageType(type)
+                        .repliedMessageId(raw.replyToMessageId)
+                        .chatId(raw.chatId)
                         .sentDateTime(LocalDateTime.now(Clock.systemUTC()))
-                        .build());
+                        .build()
+        );
     }
 }

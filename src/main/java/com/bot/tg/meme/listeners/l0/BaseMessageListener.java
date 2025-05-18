@@ -3,8 +3,10 @@ package com.bot.tg.meme.listeners.l0;
 import com.bot.tg.meme.models.Language;
 import com.bot.tg.meme.models.TgMessage;
 import com.bot.tg.meme.models.events.TgMessageEvent;
+import com.bot.tg.meme.processors.MessageProcessorFactory;
 import com.bot.tg.meme.repository.SessionHistoryRepository;
-import com.bot.tg.meme.repository.SessionHistoryRepositoryImpl;
+import com.bot.tg.meme.repository.Subscription;
+import com.bot.tg.meme.repository.SubscriptionRepository;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -23,9 +25,15 @@ public class BaseMessageListener {
     @Autowired
     SessionHistoryRepository repository;
 
+    @Autowired
+    SubscriptionRepository subscriptionRepository;
+
+    @Autowired
+    MessageProcessorFactory messageProcessorFactory;
+
     @EventListener
     @Async("level0Executor")
-    public void onApplicationEvent(TgMessageEvent event) {
+    public void onApplicationEventForSessionsHistory(TgMessageEvent event) {
         if (event.tgUpdate.message() != null
                 && event.tgUpdate.message().text() != null
         ) {
@@ -39,5 +47,22 @@ public class BaseMessageListener {
                     .messageId(Optional.of(event.tgUpdate.message().messageId()))
                     .build());
         }
+    }
+
+    @EventListener
+    @Async("level0Executor")
+    public void onApplicationEventForSubscriptions(TgMessageEvent event) {
+        if (event.tgUpdate.message() != null) {
+            logger.info("Received subscription to process, chatId: {}", event.tgUpdate.message().chat().id());
+
+            subscriptionRepository.addNew(new Subscription(event.tgUpdate.message().chat().id()));
+        }
+    }
+
+    @EventListener
+    @Async("level0Executor")
+    public void onApplicationEventForCustomEventsProcessing(TgMessageEvent event) {
+        logger.info("Received custom event processing to process, chatId: {}", event.tgUpdate.message().chat().id());
+        messageProcessorFactory.getProcessor(event.tgUpdate).forEach(it -> it.process(event.tgUpdate));
     }
 }

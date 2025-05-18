@@ -17,13 +17,13 @@ public class EventMessagesPublisher {
     public EventMessagesPublisher(ApplicationEventPublisher applicationEventPublisher) {
         this.applicationEventPublisher = applicationEventPublisher;
     }
-    public void publishCustomEvent(final Update update) {
-        logger.info("Publishing Update event from Telegram");
+    public void publishRawTgEvent(final Update update) {
+        logger.info("Publishing raw update event from Telegram");
         TgMessageEvent customSpringEvent = new TgMessageEvent(this, update);
         applicationEventPublisher.publishEvent(customSpringEvent);
     }
 
-    public void publishGifSendingEvent(final TgSendEvent update) {
+    public void publishTgSendEvent(final TgSendEvent update) {
         logger.info("Publishing Update event from Telegram in chat with id {}", update.tgRawSendEvent.chatId);
         applicationEventPublisher.publishEvent(update);
     }

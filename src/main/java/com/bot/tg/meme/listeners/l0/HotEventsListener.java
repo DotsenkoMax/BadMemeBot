@@ -94,10 +94,10 @@ public class HotEventsListener {
                 }
                 logger.info("Hot event was successfully processed, embeddings: {} ", embeddings);
 
-                publisher.publishGifSendingEvent(new TgSendEvent(this,
+                publisher.publishTgSendEvent(new TgSendEvent(this,
                     TgSendEvent.TgRawSendEvent.builder()
                             .chatId(event.getChatId())
-                            .gifUrl(gif.getMp4Url().get())
+                            .gifUrl(Optional.of(gif.getMp4Url().get()))
                             .build()
                     )
                 );

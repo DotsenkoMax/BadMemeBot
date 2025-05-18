@@ -12,6 +12,7 @@ import org.springframework.scheduling.annotation.Scheduled;
 import org.springframework.stereotype.Component;
 
 import java.util.List;
+import java.util.Optional;
 
 @Component
 public class MorningGifJob {
@@ -72,10 +73,10 @@ public class MorningGifJob {
 
         gifList.forEach(pic ->
                 subscriptions.forEach(
-                        it -> publisher.publishGifSendingEvent(
+                        it -> publisher.publishTgSendEvent(
                                 new TgSendEvent(this,
                                         TgSendEvent.TgRawSendEvent.builder()
-                                                .gifUrl(pic)
+                                                .gifUrl(Optional.of(pic))
                                                 .chatId(it.chatId)
                                                 .build()
                                 )
