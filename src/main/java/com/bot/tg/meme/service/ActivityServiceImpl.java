@@ -8,8 +8,10 @@ import lombok.Setter;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 
+import java.time.Clock;
 import java.time.Duration;
 import java.time.LocalDateTime;
+import java.time.ZonedDateTime;
 import java.util.Optional;
 
 @Component
@@ -28,8 +30,7 @@ public class ActivityServiceImpl implements ActivityService {
         if (lastChatSession.isEmpty()) {
             return false;
         }
-
-        return Date.isDistanceLessThen(lastChatSession.get().maxDateTimeInSession, LocalDateTime.now(),
+        return Date.isDistanceLessThen(lastChatSession.get().maxDateTimeInSession, LocalDateTime.now(Clock.systemUTC()),
                 Duration.ofSeconds(chatSessionConfig.getMaxTimeWhenGifSessionGetsOutdatedInSeconds()))
                 && lastChatSession.get().messages.size() >= chatSessionConfig.getMinNumberOfMessagesInOneGifSession();
     }

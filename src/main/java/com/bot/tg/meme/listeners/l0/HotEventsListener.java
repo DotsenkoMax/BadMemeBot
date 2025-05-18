@@ -1,10 +1,9 @@
 package com.bot.tg.meme.listeners.l0;
 
 import com.bot.tg.meme.integrations.giphy.GiphyClient;
-import com.bot.tg.meme.integrations.giphy.model.request.TranslateGifRequest;
 import com.bot.tg.meme.models.TgMessage;
 import com.bot.tg.meme.models.events.TgChatHotEvent;
-import com.bot.tg.meme.models.events.TgGifEvent;
+import com.bot.tg.meme.models.events.TgSendEvent;
 import com.bot.tg.meme.publisher.EventMessagesPublisher;
 import com.bot.tg.meme.repository.SessionHistoryRepository;
 import com.bot.tg.meme.service.EmbeddingService;
@@ -86,7 +85,7 @@ public class HotEventsListener {
             if (event.getEventType() == TgChatHotEvent.Type.GIF) {
                 final var gif = giphyClient.getTranslateGif(translateGifRequest()
                         .s(embeddings)
-                        .rating(List.of( "r"))
+                        .rating(List.of( "pg", "pg13", "r"))
                         .build());
 
                 if (gif.getMp4Url().isEmpty()) {
@@ -95,7 +94,13 @@ public class HotEventsListener {
                 }
                 logger.info("Hot event was successfully processed, embeddings: {} ", embeddings);
 
-                publisher.publishGifSendingEvent(new TgGifEvent(this,event.getChatId(), gif.getMp4Url().get()));
+                publisher.publishGifSendingEvent(new TgSendEvent(this,
+                    TgSendEvent.TgRawSendEvent.builder()
+                            .chatId(event.getChatId())
+                            .gifUrl(gif.getMp4Url().get())
+                            .build()
+                    )
+                );
 
                 lock.setSent(true);
             }

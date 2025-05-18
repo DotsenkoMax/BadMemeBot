@@ -6,6 +6,7 @@ import com.bot.tg.meme.integrations.giphy.GiphyClient;
 import com.bot.tg.meme.integrations.telegram.TelegramClient;
 import com.bot.tg.meme.listeners.l0.BaseMessageListener;
 import com.bot.tg.meme.models.events.TgMessageEvent;
+import com.bot.tg.meme.models.events.TgSendEvent;
 import com.pengrad.telegrambot.TelegramBot;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -49,6 +50,11 @@ public class TestListener {
         final Optional<String> urlMp4 = gif.getMp4Url();
 
         logger.info("Received GIF with url {}", urlMp4);
-        urlMp4.ifPresent(url -> telegramClient.sendGif(event.tgUpdate, url));
+        urlMp4.ifPresent(url -> telegramClient.sendGif(
+                TgSendEvent.TgRawSendEvent.builder()
+                        .chatId(event.tgUpdate.message().chat().id())
+                        .gifUrl(url)
+                        .build()
+        ));
     }
 }

@@ -2,7 +2,7 @@ package com.bot.tg.meme.jobs;
 
 import com.bot.tg.meme.integrations.giphy.GiphyClient;
 import com.bot.tg.meme.integrations.giphy.model.request.TranslateGifRequest;
-import com.bot.tg.meme.models.events.TgGifEvent;
+import com.bot.tg.meme.models.events.TgSendEvent;
 import com.bot.tg.meme.publisher.EventMessagesPublisher;
 import com.bot.tg.meme.repository.SubscriptionRepository;
 import org.slf4j.Logger;
@@ -73,7 +73,12 @@ public class MorningGifJob {
         gifList.forEach(pic ->
                 subscriptions.forEach(
                         it -> publisher.publishGifSendingEvent(
-                                new TgGifEvent(this, it.chatId, pic)
+                                new TgSendEvent(this,
+                                        TgSendEvent.TgRawSendEvent.builder()
+                                                .gifUrl(pic)
+                                                .chatId(it.chatId)
+                                                .build()
+                                )
                         )
                 )
         );

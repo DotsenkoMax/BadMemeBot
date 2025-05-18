@@ -1,7 +1,7 @@
 package com.bot.tg.meme.publisher;
 
 import com.bot.tg.meme.models.events.TgChatHotEvent;
-import com.bot.tg.meme.models.events.TgGifEvent;
+import com.bot.tg.meme.models.events.TgSendEvent;
 import com.bot.tg.meme.models.events.TgMessageEvent;
 import com.pengrad.telegrambot.model.Update;
 import org.slf4j.Logger;
@@ -23,13 +23,13 @@ public class EventMessagesPublisher {
         applicationEventPublisher.publishEvent(customSpringEvent);
     }
 
-    public void publishGifSendingEvent(final TgGifEvent update) {
-        logger.info("Publishing Update event from Telegram in chat with id {}", update.chatId);
+    public void publishGifSendingEvent(final TgSendEvent update) {
+        logger.info("Publishing Update event from Telegram in chat with id {}", update.tgRawSendEvent.chatId);
         applicationEventPublisher.publishEvent(update);
     }
 
     public void publishHotEvent(final TgChatHotEvent hotEvent) {
-        logger.info("Publishing hot eventin chat with id {}", hotEvent.getChatId());
+        logger.info("Publishing hot event in chat with id {} {}", hotEvent.getChatId(), hotEvent.getIdempotencyKey());
         applicationEventPublisher.publishEvent(hotEvent);
     }
 }

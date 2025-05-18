@@ -1,10 +1,10 @@
 
 listeners:
-  enable-echo-listener: true
+  enable-echo-listener: false
 
 chat:
   session:
     max-distance-between-messages-in-one-gif-session-in-seconds: 600
-    min-number-of-messages-in-one-gif-session: 100
-    max-time-when-gif-session-gets-outdated-in-seconds: 10
-    min-time-between-gifs-in-one-chat-in-seconds: 20
+    min-number-of-messages-in-one-gif-session: 5
+    max-time-when-gif-session-gets-outdated-in-seconds: 30
+    min-time-between-gifs-in-one-chat-in-seconds: 300

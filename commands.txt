@@ -1,4 +1,4 @@
 mvn compile jib:build
-kuberctl apply -f deployment.yaml
-kuberctl rollout restart deployment bad-meme-bot
+kubectl apply -f deployment.yaml
+kubectl rollout restart deployment bad-meme-bot
 kubectl scale deployment bad-meme-bot --replicas=0

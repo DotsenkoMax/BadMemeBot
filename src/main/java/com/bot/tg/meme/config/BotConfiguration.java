@@ -26,7 +26,7 @@ public class BotConfiguration {
     EventMessagesPublisher initPublisher(TelegramBot bot, ApplicationEventPublisher applicationEventPublisher) {
         EventMessagesPublisher publisher = new EventMessagesPublisher(applicationEventPublisher);
         bot.setUpdatesListener(updates -> {
-            updates.stream().filter(it -> it.message().text() != null).forEach(publisher::publishCustomEvent);
+            updates.stream().filter(it -> it.message() != null && it.message().text() != null).forEach(publisher::publishCustomEvent);
             return UpdatesListener.CONFIRMED_UPDATES_ALL;
         }, e -> {
             if (e.response() != null) {
