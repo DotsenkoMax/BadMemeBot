@@ -98,6 +98,7 @@ public class HotEventsListener {
                     TgSendEvent.TgRawSendEvent.builder()
                             .chatId(event.getChatId())
                             .gifUrl(Optional.of(gif.getMp4Url().get()))
+                            .embeddings(Optional.of(embeddings))
                             .build()
                     )
                 );

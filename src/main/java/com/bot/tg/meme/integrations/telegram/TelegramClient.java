@@ -45,9 +45,9 @@ public class TelegramClient {
     }
 
     @Cacheable("telegramBotName")
-    public BotName getMe() {
-        final var response = bot.execute(new GetMyName());
-        logger.info("Received bot name {}", response.botName().name());
-        return response.botName();
+    public String getMe() {
+        final var response = bot.execute(new GetMe());
+        logger.info("Received bot name {}", response.user().username());
+        return response.user().username();
     }
 }

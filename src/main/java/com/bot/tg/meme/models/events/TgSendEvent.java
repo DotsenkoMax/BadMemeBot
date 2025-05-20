@@ -32,6 +32,10 @@ public class TgSendEvent extends ApplicationEvent {
         public final Optional<String> message = Optional.empty();
 
         @Builder.Default
+        public final Optional<String> embeddings = Optional.empty();
+
+
+        @Builder.Default
         public final Optional<File> fileAnimation = Optional.empty();
     }
 }

@@ -19,4 +19,7 @@ public class BotMessage {
     private Optional<Integer> repliedMessageId = Optional.empty();
 
     private BotMessageType messageType;
+
+    @Builder.Default
+    private Optional<String> embeddings = Optional.empty();
 }

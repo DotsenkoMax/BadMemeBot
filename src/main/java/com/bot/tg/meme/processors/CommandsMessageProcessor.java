@@ -1,8 +1,11 @@
 package com.bot.tg.meme.processors;
 
+import com.bot.tg.meme.models.BotMessage;
+import com.bot.tg.meme.models.BotMessageType;
 import com.bot.tg.meme.models.events.TgSendEvent;
 import com.bot.tg.meme.processors.annotation.TgCommand;
 import com.bot.tg.meme.publisher.EventMessagesPublisher;
+import com.bot.tg.meme.repository.BotMessagesRepository;
 import com.pengrad.telegrambot.model.Update;
 import org.springframework.stereotype.Component;
 
@@ -16,12 +19,17 @@ import java.util.function.Consumer;
 public class CommandsMessageProcessor implements MessageProcessor {
     private final String botName;
     private final EventMessagesPublisher publisher;
+    private final BotMessagesRepository repository;
 
     private HashMap<String, Consumer<Update>> commandTask = new HashMap<>();
 
-    public CommandsMessageProcessor(String botName, EventMessagesPublisher publisher) {
+
+    public CommandsMessageProcessor(String botName,
+                                    EventMessagesPublisher publisher,
+                                    BotMessagesRepository botMessagesRepository) {
         this.botName = botName;
         this.publisher = publisher;
+        this.repository = botMessagesRepository;
 
         Class<CommandsMessageProcessor> obj = CommandsMessageProcessor.class;
         for (Method method : obj.getDeclaredMethods()) {
@@ -78,6 +86,23 @@ public class CommandsMessageProcessor implements MessageProcessor {
                         .replyToMessageId(Optional.of(tgEvent.message().messageId()))
                         .message(Optional.of("Sosal?"))
                         .build())
+        );
+    }
+
+    @TgCommand("lastpromt")
+    private void processLastPromtCommand(Update tgEvent) {
+        final var maybeGif = repository.getLastSentMessageInChat(tgEvent.message().chat().id(), BotMessageType.GIF);
+        final var resultOnThisCommand = maybeGif.map(BotMessage::getEmbeddings)
+                .flatMap(it -> it)
+                .orElse("No promt.");
+
+        publisher.publishTgSendEvent(
+                new TgSendEvent(this, TgSendEvent.TgRawSendEvent.builder()
+                    .chatId(tgEvent.message().chat().id())
+                    .replyToMessageId(Optional.of(tgEvent.message().messageId()))
+                    .message(Optional.of(resultOnThisCommand))
+                    .build()
+                )
         );
     }
 

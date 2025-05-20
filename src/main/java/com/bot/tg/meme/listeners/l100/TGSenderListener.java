@@ -44,6 +44,7 @@ public class TGSenderListener {
                         .repliedMessageId(raw.replyToMessageId)
                         .chatId(raw.chatId)
                         .sentDateTime(LocalDateTime.now(Clock.systemUTC()))
+                        .embeddings(raw.embeddings)
                         .build()
         );
     }

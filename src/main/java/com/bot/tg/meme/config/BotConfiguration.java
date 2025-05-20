@@ -58,6 +58,6 @@ public class BotConfiguration {
 
     @Bean
     public String botName(TelegramClient telegramClient) {
-        return telegramClient.getMe().name();
+        return telegramClient.getMe();
     }
 }

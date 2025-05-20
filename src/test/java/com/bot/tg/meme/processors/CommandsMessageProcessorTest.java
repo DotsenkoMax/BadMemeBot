@@ -1,6 +1,7 @@
 package com.bot.tg.meme.processors;
 import com.bot.tg.meme.models.events.TgSendEvent;
 import com.bot.tg.meme.publisher.EventMessagesPublisher;
+import com.bot.tg.meme.repository.BotMessagesRepository;
 import com.pengrad.telegrambot.model.Chat;
 import com.pengrad.telegrambot.model.Message;
 import com.pengrad.telegrambot.model.Update;
@@ -18,13 +19,13 @@ public class CommandsMessageProcessorTest {
 
     private EventMessagesPublisher publisher;
 
-    @Spy
     private CommandsMessageProcessor processor;
 
     @BeforeEach
     public void setUp() {
         publisher = mock(EventMessagesPublisher.class);
-        processor = new CommandsMessageProcessor("TestBot", publisher);
+
+        processor = new CommandsMessageProcessor("TestBot", publisher, mock());
     }
 
     @Test

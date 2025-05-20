@@ -1,12 +1,10 @@
 package com.bot.tg.meme.repository;
 
 import com.bot.tg.meme.models.BotMessage;
+import com.bot.tg.meme.models.BotMessageType;
 import org.springframework.stereotype.Component;
 
-import java.util.Comparator;
-import java.util.HashMap;
-import java.util.Optional;
-import java.util.TreeSet;
+import java.util.*;
 
 @Component
 public class BotMessageRepositoryImpl implements BotMessagesRepository {
@@ -17,6 +15,19 @@ public class BotMessageRepositoryImpl implements BotMessagesRepository {
     public synchronized Optional<BotMessage> getLastSentMessageInChat(Long chatId) {
         if (messages.containsKey(chatId)) {
             return Optional.of(messages.get(chatId).getLast());
+        }
+        return Optional.empty();
+    }
+    @Override
+    public synchronized Optional<BotMessage> getLastSentMessageInChat(Long chatId, BotMessageType type) {
+        if (messages.containsKey(chatId)) {
+            for (Iterator<BotMessage> it = messages.get(chatId).descendingIterator(); it.hasNext(); ) {
+                BotMessage each = it.next();
+                if (each.getMessageType().equals(type)) {
+                    return Optional.of(each);
+                }
+            }
+            return Optional.empty();
         }
         return Optional.empty();
     }

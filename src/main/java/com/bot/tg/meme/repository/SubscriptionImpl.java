@@ -13,6 +13,7 @@ public class SubscriptionImpl implements SubscriptionRepository {
 
     public SubscriptionImpl() {
         allSubscriptions.add(new Subscription(405217254L)); // me
+        allSubscriptions.add(new Subscription(-1001559610005L)); // no levch
     }
 
     @Override
