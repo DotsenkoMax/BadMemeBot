@@ -25,7 +25,7 @@ public class CommandsMessageProcessorTest {
     public void setUp() {
         publisher = mock(EventMessagesPublisher.class);
 
-        processor = new CommandsMessageProcessor("TestBot", publisher, mock());
+        processor = new CommandsMessageProcessor("TestBot", publisher, mock(), mock());
     }
 
     @Test

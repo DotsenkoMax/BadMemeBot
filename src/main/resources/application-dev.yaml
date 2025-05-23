@@ -1,6 +1,6 @@
 
 listeners:
-  enable-echo-listener: true
+  enable-echo-listener: false
 
 chat:
   session:

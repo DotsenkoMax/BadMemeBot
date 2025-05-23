@@ -34,5 +34,10 @@ spec:
                 secretKeyRef:
                   name: bad-meme-cohere-secret
                   key: cohere_token
+            - name: tenor_token
+              valueFrom:
+                secretKeyRef:
+                  name: bad-meme-tenor-secret
+                  key: tenor_token
             - name: spring_profile
               value: "prod"
